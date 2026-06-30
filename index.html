@@ -589,6 +589,159 @@ textarea:focus{
   }
 }
 
+/* ==========================
+   DESKTOP RESPONSIVE MODE
+========================== */
+
+@media (min-width: 900px){
+
+
+body{
+    background:#f3f4f6;
+}
+
+
+/* hide bottom navigation on desktop */
+
+.bottom-nav{
+    display:none;
+}
+
+
+/* convert top tabs to sidebar */
+
+.tabs{
+
+    position:fixed;
+
+    left:0;
+
+    top:70px;
+
+    width:220px;
+
+    height:calc(100vh - 70px);
+
+    background:#ffffff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:15px;
+
+    border-right:1px solid #ddd;
+
+    gap:8px;
+
+}
+
+
+
+.tab{
+
+    padding:14px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+}
+
+
+
+/* main area */
+
+.wrapper{
+
+    margin-left:240px;
+
+    max-width:900px;
+
+    margin-right:auto;
+
+}
+
+
+
+/* top bar */
+
+.topbar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    right:0;
+
+    height:65px;
+
+    z-index:1000;
+
+}
+
+
+
+/* cards */
+
+.card{
+
+    border-radius:14px;
+
+}
+
+
+
+/* forms */
+
+.input-group input,
+.input-group textarea,
+.input-group select{
+
+    max-width:500px;
+
+}
+
+
+/* buttons */
+
+.primary-btn{
+
+    width:auto;
+
+    padding:12px 22px;
+
+}
+
+
+
+/* investment form */
+
+#invest .card:first-child,
+#clients .card:first-child,
+#settings .card:first-child{
+
+    max-width:700px;
+
+}
+
+
+/* reports */
+
+.report-card,
+.client-card,
+.invest-card{
+
+    max-width:700px;
+
+}
+
+
+
+}
+
 </style>
 
 </head>
@@ -985,7 +1138,7 @@ No cloud sync. No third-party servers. Your data stays fully under your control.
   <input 
     type="file"
     id="restoreFileInput"
-    accept=".json"
+   accept=".ftb,.json"
     style="display:none"
     onchange="restoreBackupFromFile(event)"
   >
@@ -2536,7 +2689,7 @@ function downloadBackupFile(){
       JSON.stringify(backup,null,2)
     ],
     {
-      type:"application/json"
+      type:"application/octet-stream"
     }
   );
 
@@ -2554,7 +2707,7 @@ function downloadBackupFile(){
   "FinTrust_Backup_" +
   new Date().toISOString().slice(0,10)
   +
-  ".json";
+  ".ftb";
 
 
   document.body.appendChild(a);
@@ -2569,7 +2722,7 @@ function downloadBackupFile(){
   URL.revokeObjectURL(url);
 
 
-  showToast("Backup file downloaded");
+  showToast("Backup saved in Downloads folder");
 
 }
 
