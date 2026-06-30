@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FinTrust Mini Back Office</title>
+
+<!-- Firebase compat libs -->
+
+<style>
+
+.logout-btn{
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #065f46;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.logout-btn:hover{
+  background: #047857;
+}
+
+.report-card{
+  background:#fff;
+  padding:12px;
+  border-radius:10px;
+  border-left:4px solid #0A8F55;
+  margin-bottom:10px;
+}
+
+:root{
+  --green:#0A8F55;
+  --light:#e8f5e9;
+  --red:#d32f2f;
+  --muted:#6b7280;
+  --card-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  width:100%;
+  overflow-x:hidden;
+  font-family:Arial,sans-serif;
+  background:#f6f6f6;
+}
+
+/* ---------- TOP BAR ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  background:#fff;
+  border-bottom:1px solid #e6e6e6;
+}
+.logo{
+  width:40px;height:40px;
+  border-radius:50%;
+  background:#007f3b;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+.title{font-size:18px;font-weight:600}
+
+/* ---------- TABS ---------- */
+.tabs{
+  display:flex;
+  gap:12px;
+  padding:10px;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  overflow-x:auto;
+}
+.tab{
+  padding:8px 14px;
+  font-weight:600;
+  color:#555;
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  white-space:nowrap;
+}
+.tab.active{
+  color:var(--green);
+  border-bottom-color:var(--green);
+}
+
+/* ---------- PAGE ---------- */
+.wrapper{
+  max-width:480px;
+  margin:18px auto;
+  padding:0 14px;
+  width:100%;
+  overflow-x:hidden;
+}
+
+/* ---------- CARDS ---------- */
+.card{
+  background:#fff;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:var(--card-shadow);
+  margin-bottom:16px;
+  width:100%;
+}
+.card h3{
+  margin:0 0 14px;
+  text-align:center;
+}
+
+.inv-summary div:not(.inv-client-title),
+.inv-details div{
+  font-size:14px;
+  margin:4px 0;
+}
+
+.btn-link{
+  background:none;
+  border:none;
+  color:#007f3b;
+  font-weight:600;
+  padding:6px 0;
+  cursor:pointer;
+}
+
+.copyright{
+  text-align:center;
+  font-size:12px;
+  color:#6b7280;
+  margin-top:30px;
+  padding-bottom:10px;
+}
+
+/* INVESTMENT TITLE — BIG ONLY HERE */
+.inv-client-title{
+  font-size:19px;     /* 🔥 bigger */
+  font-weight:700;
+  color:#111827;
+  margin-bottom:8px;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  background: #ffffff;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 9999;
+}
+
+.bottom-nav .nav-item {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.bottom-nav .nav-item span {
+  font-size: 11px;
+}
+
+.bottom-nav .nav-item.active {
+  color: #0a8f4d;
+  font-weight: 600;
+}
+
+/* Give space so content is not hidden */
+body {
+  padding-bottom: 65px;
+}
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
+}
+
+/* ---------- FORM (IMPORTANT FIX HERE) ---------- */
+.input-group{margin-bottom:12px}
+
+.input-group label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+  font-size:14px;
+}
+
+/* 🚨 CRITICAL FIX: font-size MUST be 16px */
+input,
+select,
+textarea{
+  width:100%;
+  padding:11px;
+  border:2px solid #d1d5db;
+  border-radius:10px;
+  font-size:16px; /* <-- THIS STOPS IOS ZOOM & SCROLL */
+  outline:none;
+  max-width:100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--green);
+}
+
+/* ---------- BUTTON ---------- */
+.primary-btn{
+  width:100%;
+  padding:13px;
+  border-radius:10px;
+  border:none;
+  background:var(--green);
+  color:#fff;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.show-more-btn{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+  background:#f9fafb;
+  font-weight:700;
+  cursor:pointer;
+  color:#111827;
+}
+
+#settings .btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- CLIENT / INVEST CARDS ---------- */
+
+/* ---------- CLIENT LIST (PROFESSIONAL BW) ---------- */
+.client-card{
+  background:#ffffff;
+  padding:16px;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  margin-bottom:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.04);
+}
+
+.client-title{
+  font-weight:700;
+  font-size:17px;
+  color:#111827;
+  margin-bottom:8px;
+}
+
+.client-line{
+  font-size:14px;
+  color:#374151;
+  margin:6px 0;
+  line-height:1.5;
+}
+
+.small-info{
+  font-size:13px;
+  color:#6b7280;
+  margin-top:6px;
+}
+
+/* divider */
+.client-divider{
+  height:1px;
+  background:#e5e7eb;
+  margin:10px 0;
+}
+
+/* ---------- BUTTON ROW ---------- */
+.btn-row{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.btn-small{
+  flex:1;
+  padding:9px;
+  border-radius:8px;
+  border:none;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+}
+.btn-edit{background:var(--green);color:#fff}
+.btn-delete{background:var(--red);color:#fff}
+.btn-cancel{background:#9ca3af;color:#fff}
+
+/* ---------- INVESTMENT CARDS (PROFESSIONAL STYLE) ---------- */
+.invest-card{
+  background:#ffffff;
+  padding:16px;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
+  margin-bottom:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+}
+
+.invest-title{
+  font-size:16px;
+  font-weight:700;
+  color:#111827;
+  margin-bottom:6px;
+}
+
+.invest-line{
+  font-size:14px;
+  color:#374151;
+  margin:4px 0;
+}
+
+.invest-line span{
+  color:#6b7280;
+  font-weight:600;
+}
+
+.invest-divider{
+  height:1px;
+  background:#e5e7eb;
+  margin:10px 0;
+}
+
+/* --- FIX: Keep modal buttons above bottom nav --- */
+.modal {
+  padding-bottom: 80px; /* space for bottom navigation */
+}
+
+/* Button row inside modal */
+.modal .btn-row,
+.modal div[style*="gap"] {
+  margin-bottom: 20px;
+}
+
+.modal-backdrop{
+  align-items: flex-start;
+  padding-top: 30px;
+}
+
+/* ---------- MODAL ---------- */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1200;
+}
+
+.modal{
+  width:92%;
+  max-width:480px;
+  background:#fff;
+  border-radius:12px;
+  padding:16px;
+
+  max-height:85vh;          /* ✅ limit height */
+  overflow-y:auto;          /* ✅ enable vertical scroll */
+  -webkit-overflow-scrolling: touch; /* ✅ smooth iOS scroll */
+}
+
+/* ---------- AUTOSUGGEST ---------- */
+.suggestions{
+  position:relative;
+  width:100%;
+}
+.suggestions-list{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  background:#fff;
+  border:1px solid #e6e6e6;
+  border-radius:8px;
+  max-height:180px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:100;
+}
+.suggestion-item{
+  padding:9px 10px;
+  cursor:pointer;
+}
+.suggestion-item:hover{
+  background:#f3f4f6;
+}
+
+/* ---------- TOAST ---------- */
+
+#toast{
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 75px;              /* 🔥 ABOVE bottom nav */
+  background: var(--green);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  display: none;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 10000;            /* 🔥 Higher than bottom nav */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* ---------- MOBILE ---------- */
+@media(max-width:520px){
+  .wrapper{padding:0 12px}
+}
+
+/* ================================
+   HOME PAGE THEME ONLY
+   (Safe – does not affect other tabs)
+================================ */
+
+/* ===== OUTER FRAME (DARK GREEN EDGE) ===== */
+.home-theme{
+  background:
+    linear-gradient(
+      180deg,
+      #064e3b 0%,      /* dark forest green */
+      #0f766e 40%,     /* teal-green */
+      #e9f7ef 100%     /* fade to light green */
+    );
+  padding: 90px 0 40px;   /* strong top frame */
+}
+
+/* Lift first card into dark frame */
+.home-theme .card:first-child{
+  margin-top: -70px;
+}
+
+/* ===== INNER CARDS (LIGHT GREEN SURFACE) ===== */
+.home-theme .card{
+  background: linear-gradient(
+    180deg,
+    #f0fdf4,     /* very light green */
+    #ecfdf5
+  );
+  border: 2px solid #bbf7d0;   /* light green border */
+  border-radius: 18px;
+  box-shadow:
+    0 12px 28px rgba(6, 78, 59, 0.28),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+/* ===== HEADINGS ===== */
+.home-theme h3{
+  color: #064e3b; /* deep green */
+  font-weight: 700;
+}
+
+/* Underline accent */
+.home-theme h3::after{
+  content:"";
+  display:block;
+  width:44px;
+  height:4px;
+  margin:8px auto 0;
+  border-radius:6px;
+  background: linear-gradient(
+    90deg,
+    #16a34a,
+    #22c55e
+  );
+}
+
+/* ===== TEXT ===== */
+.home-theme p{
+  color: #14532d;
+}
+
+/* Lists */
+.home-theme .client-line{
+  color: #166534;
+}
+
+/* ===== BUTTONS ===== */
+.home-theme .btn-edit{
+  background: linear-gradient(
+    135deg,
+    #15803d,
+    #22c55e
+  );
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(21,128,61,0.45);
+}
+
+.home-theme .btn-cancel{
+  background: #dcfce7;
+  color: #065f46;
+  border: 1px solid #86efac;
+}
+
+/* LOGIN SCREEN */
+.login-screen{
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg,#064e3b,#065f46,#047857);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.login-card{
+  background: #ecfdf5;
+  padding: 28px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.login-card h2{
+  color: #065f46;
+  margin-bottom: 8px;
+}
+
+.login-card p{
+  font-size: 14px;
+  margin-bottom: 18px;
+  color: #374151;
+}
+
+.login-card input{
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #a7f3d0;
+  margin-bottom: 16px;
+  outline: none;
+}
+
+.login-card button{
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg,#16a34a,#22c55e);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========================
+   MOBILE PWA MODE
+========================= */
+@media (max-width: 768px) {
+
+  /* Hide top tabs */
+  .tabs {
+    display: none !important;
+  }
+
+  /* Give space for bottom nav */
+  .wrapper {
+    padding-bottom: 70px;
+  }
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <h2>FinTrust Back Office</h2>
+    <p>Enter PIN to continue</p>
+
+    <input
+      type="password"
+      id="loginPin"
+      placeholder="Enter PIN"
+      maxlength="6"
+    />
+
+    <button onclick="login()">Login</button>
+  </div>
+</div>
+
+<div id="appContainer" style="display:none">
+
+<!-- top -->
+<div class="topbar">
+  <div class="logo">FC</div>
+  <div class="title">FinTrust Creations</div>
+
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+</div>
+
+<!-- tabs -->
+<div class="tabs" role="tablist" aria-label="Main tabs">
+  <div class="tab active" role="tab" data-tab="home" onclick="openTab('home')">Home</div>
+  <div class="tab" role="tab" data-tab="clients" onclick="openTab('clients')">Clients</div>
+  <div class="tab" role="tab" data-tab="invest" onclick="openTab('invest')">Investments</div>
+  <div class="tab" role="tab" data-tab="reports" onclick="openTab('reports')">Reports</div>
+
+<div class="tab" role="tab" data-tab="settings" onclick="openTab('settings')">Settings</div>
+
+</div>
+
+<div class="wrapper">
+
+  <!-- HOME -->
+
+<div id="home" class="tab-content home-theme" style="display:block">
+
+  <!-- Welcome -->
+  <div class="card">
+    <h3>👋 Welcome to FinTrust Back Office</h3>
+    <p style="text-align:center;color:#555;margin-top:6px">
+
+This back office application stores all client and investment data locally on your device using secure browser storage.
+No cloud sync. No third-party servers. Your data stays fully under your control.
+
+    </p>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card">
+    <h3>⚡ Quick Actions</h3>
+
+    <div class="btn-row">
+      <button class="btn-small btn-edit" onclick="openTab('clients')">
+        ➕ Add Client
+      </button>
+      <button class="btn-small btn-edit" onclick="openTab('invest')">
+        💼 Add Investment
+      </button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-small btn-cancel" onclick="openTab('reports')">
+        📊 View Reports
+      </button>
+    </div>
+  </div>
+
+  <!-- What you can do -->
+  <div class="card">
+    <h3>📌 What You Can Do Here</h3>
+
+    <div class="client-line">✔ Maintain complete client records</div>
+    <div class="client-line">✔ Track SIP, Lumpsum & SWP investments</div>
+    <div class="client-line">✔ View consolidated client portfolios</div>
+    <div class="client-line">✔ AMC-wise & Scheme-wise summaries</div>
+
+  <div class="client-line"> ✔ Generate printable investment backups </div>
+
+<div class="client-line">
+✔ All data is saved locally in your browser and remains accessible even after closing the app.
+</div>
+
+  <!-- How Local Storage Works-->
+
+ <div class="card">
+ <h3> 🔒 How Local Storage Works </h3>
+
+	 <div class="client-line">•	Data is saved only on this device </div>
+	 <div class="client-line">•	No automatic online synchronization</div>
+	 <div class="client-line">•	No external database or cloud access </div>
+	 <div class="client-line">•	Faster access and instant loading </div>
+	 <div class="client-line">•	Ideal for personal back-office and field usage </div>
+
+ <div class="client-line"> ⚠️ Important: Clearing browser data or changing devices will remove local records unless you export backups.  </div>
+
+  </div>
+
+  </div>
+
+  <!-- Tips -->
+  <div class="card">
+    <h3>💡 Tips</h3>
+    <div class="client-line">
+      • Use <b>Reports</b> tab to send statements via WhatsApp or Email.
+    </div>
+
+    <div class="client-line">
+     • Export data regularly for safety
+    </div>
+    <div class="client-line">
+      • Use the same browser & device for continuity
+    </div>
+
+    <div class="client-line">
+     • Best suited for personal distributor back-office usage
+    </div>
+
+   <div class="client-line">
+    • Optimized for mobile & PWA-style usage
+    </div>
+
+ <div class="client-line"> 📁 Take periodic printable backups </div>
+
+<div class="client-line"> 📁 Store PDF backups securely </div>
+
+ <div class="client-line"> 📁 Use one device as primary back-office </div>
+
+  </div>
+
+</div>
+
+  <!-- CLIENTS -->
+  <div id="clients" class="tab-content" style="display:none">
+    <div class="card">
+      <h3>Add Client</h3>
+
+      <div class="input-group"><label for="client_name">Name</label><input id="client_name" type="text" placeholder="e.g. Arun Kumar" /></div>
+      <div class="input-group"><label for="client_mobile">Mobile Number</label><input id="client_mobile" type="text" placeholder="e.g. 9876543210" /></div>
+      <div class="input-group"><label for="client_email">Email ID</label><input id="client_email" type="text" placeholder="e.g. client@example.com" /></div>
+      <div class="input-group"><label for="client_pan">PAN Number</label><input id="client_pan" type="text" placeholder="e.g. ABCDE1234F" /></div>
+      <div class="input-group"><label for="client_dob">Date of Birth</label><input id="client_dob" type="date" /></div>
+      <div class="input-group"><label for="client_kyc">KYC Status</label>
+        <select id="client_kyc"><option value="">Select</option><option>Completed</option><option>Pending</option><option>Not Done</option></select>
+      </div>
+      <div class="input-group"><label for="client_risk">Risk Profile</label>
+        <select id="client_risk"><option value="">Select</option><option>Conservative</option><option>Moderate</option><option>Aggressive</option></select>
+      </div>
+      <div class="input-group"><label for="client_address">Address</label><textarea id="client_address" rows="2" style="resize:vertical;padding:10px;border-radius:8px"></textarea></div>
+
+  <button type="button" id="addClientBtn" class="primary-btn">
+  Add Client
+</button>
+    </div>
+
+    <div class="card">
+      <h3>Client List</h3>
+      <div class="input-group"><input id="searchClientBox" type="text" placeholder="Search client by name..." oninput="filterClients()" /></div>
+      <div id="clientList">Loading...</div>
+    </div>
+  </div>
+
+  <!-- INVESTMENTS -->
+  <div id="invest" class="tab-content" style="display:none">
+    <div class="card">
+      <h3>Add Investment</h3>
+
+      <!-- Client selection: autosuggest input with hidden id -->
+      <div class="input-group suggestions">
+        <label for="inv_client_input">Client Name</label>
+        <input id="inv_client_input" type="text" placeholder="Start typing client name..." autocomplete="off" />
+        <input id="inv_client_id" type="hidden" />
+        <div id="clientSuggestions" class="suggestions-list" style="display:none"></div>
+      </div>
+
+      <div class="input-group"><label for="inv_amc">AMC Name</label><input id="inv_amc" type="text" placeholder="e.g. Axis Mutual Fund" /></div>
+      <div class="input-group"><label for="inv_category">Scheme Category</label><input id="inv_category" type="text" placeholder="e.g. Large Cap" /></div>
+      <div class="input-group"><label for="inv_scheme">Scheme Name</label><input id="inv_scheme" type="text" placeholder="e.g. Axis Bluechip Fund" /></div>
+
+<label>Investment Type</label>
+<select id="inv_type">
+  <option value="">Select</option>
+  <option value="SIP">SIP</option>
+  <option value="Lumpsum">Lumpsum</option>
+  <option value="SWP">SWP</option> <!-- ✅ Added -->
+</select>
+
+      <div class="input-group"><label for="inv_amount">Amount</label><input id="inv_amount" type="number" placeholder="e.g. 5000" /></div>
+      <div class="input-group"><label for="inv_nav">NAV (optional)</label><input id="inv_nav" type="text" placeholder="e.g. 58.123" /></div>
+
+<div class="input-group">
+  <button type="button" class="btn-small btn-edit" onclick="fetchNAV()">
+    🔄 Fetch Latest NAV
+  </button>
+</div>
+
+      <div class="input-group"><label for="inv_folio">Folio No (optional)</label><input id="inv_folio" type="text" placeholder="e.g. FOLIO12345" /></div>
+
+<div class="input-group">
+  <label>Joint Holder</label>
+  <input id="inv_joint_holder" type="text" placeholder="Joint holder name (if any)">
+</div>
+
+<div class="input-group">
+  <label>Nominee</label>
+  <input id="inv_nominee" type="text" placeholder="Nominee name">
+</div>
+
+<label>Category</label>
+
+<select id="inv_residency">
+  <option value="">Select</option>
+  <option value="Resident Indian">Resident Indian</option>
+  <option value="NRI">NRI</option>
+</select>
+
+<div class="input-group">
+  <label>Status</label>
+  <select id="inv_status">
+    <option value="">Select</option>
+    <option>Active</option>
+    <option>Stopped</option>
+    <option>Redeemed</option>
+  </select>
+</div>
+
+<div class="input-group">
+  <label>Bank Account No</label>
+  <input id="inv_bank_acc" type="text">
+</div>
+
+<div class="input-group">
+  <label>Bank Name</label>
+  <input id="inv_bank_name" type="text">
+</div>
+
+<div class="input-group">
+  <label>MICR No</label>
+  <input id="inv_micr" type="text">
+</div>
+
+<div class="input-group">
+  <label>IFSC Code</label>
+  <input id="inv_ifsc" type="text">
+</div>
+
+<div class="input-group">
+  <label for="inv_pay_mode">Pay Mode</label>
+  <select id="inv_pay_mode">
+    <option value="">Select</option>
+    <option value="Warrant">Warrant</option>
+    <option value="Active">Active</option>
+  </select>
+</div>
+
+<div class="input-group">
+  <label>Current Value</label>
+  <input id="inv_current_value" type="number" placeholder="Current portfolio value">
+</div>
+
+      <div class="input-group"><label for="inv_address">Address (auto-filled from client or enter manually)</label><input id="inv_address" type="text" placeholder="Client address or custom address" /></div>
+      <div class="input-group"><label for="inv_date">Date</label><input id="inv_date" type="date" /></div>
+      <div class="input-group"><label for="inv_notes">Notes (optional)</label><textarea id="inv_notes" placeholder="Notes..." rows="2" style="resize:vertical;padding:10px;border-radius:8px"></textarea></div>
+
+      <button id="addInvBtn" class="primary-btn">Add Investment</button>
+    </div>
+
+    <div class="card">
+      <h3>Investment List</h3>
+      <div class="input-group"><input id="invSearchBox" type="text" placeholder="Search by client or scheme..." oninput="filterInvestments()" /></div>
+      <div id="invList">Loading...</div>
+
+    </div>
+  </div>
+
+
+
+<!-- REPORTS -->
+<div id="reports" class="tab-content" style="display:none">
+
+  <div class="card">
+    <h3>Portfolio Summary</h3>
+
+    <div class="client-line">
+      💼 Total AUM: <b id="r_totalAum">₹ 0</b>
+    </div>
+
+    <div class="client-line">
+      📈 SIP Total: <b id="r_sip_amt">₹ 0</b>
+    </div>
+
+    <div class="client-line">
+      💰 Lumpsum Total: <b id="r_lump_amt">₹ 0</b>
+    </div>
+  </div>
+
+<div class="card">
+
+<input
+  id="reportClientSearch"
+  type="text"
+  placeholder="Search client in report..."
+  oninput="filterReportClients()"
+/>
+
+</div>
+
+  <div class="card">
+    <h3>Consolidated Client Statement</h3>
+    <div id="consolidatedReport">Loading...</div>
+
+<div class="btn-row" style="margin-top:12px">
+  <button class="btn-small btn-edit" onclick="sendConsolidatedWhatsApp()">
+    📲 WhatsApp
+  </button>
+  <button class="btn-small btn-cancel" onclick="sendConsolidatedEmail()">
+    📧 Email
+  </button>
+</div>
+
+  </div>
+
+<div class="card">
+  <h3>AMC-wise Summary</h3>
+  <div id="amcReportList">Loading...</div>
+</div>
+
+  <div class="card">
+    <h3>Scheme-wise Summary</h3>
+    <div id="schemeReportList">Loading...</div>
+  </div>
+
+</div>
+
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="tab-content" style="display:none">
+
+  <!-- Change PIN -->
+  <div class="card">
+    <h3>🔐 Change Login PIN</h3>
+
+    <div class="input-group">
+      <label>Current PIN</label>
+      <input type="password" id="currentPin" placeholder="Enter current PIN">
+    </div>
+
+    <div class="input-group">
+      <label>New PIN</label>
+      <input type="password" id="newPin" placeholder="Enter new PIN">
+    </div>
+
+    <div class="input-group">
+      <label>Confirm New PIN</label>
+      <input type="password" id="confirmPin" placeholder="Confirm new PIN">
+    </div>
+
+    <button class="primary-btn" onclick="changePin()">Update PIN</button>
+  </div>
+
+
+<div class="btn-row" style="margin-top:12px">
+
+  <button class="primary-btn" onclick="exportPrintableBackup()">
+    🧾 Open Backup (Printable)
+  </button>
+
+  <button class="primary-btn" onclick="downloadBackupFile()">
+    📥 Download Backup File
+  </button>
+
+  <button class="primary-btn" onclick="shareBackupFile()">
+    📤 Share Backup File
+  </button>
+
+  <button class="primary-btn" onclick="openRestoreFile()">
+    📂 Restore From File
+  </button>
+
+  <input 
+    type="file"
+    id="restoreFileInput"
+    accept=".json"
+    style="display:none"
+    onchange="restoreBackupFromFile(event)"
+  >
+
+</div>
+
+</div>
+
+<!-- =========================
+     BOTTOM NAVIGATION (GLOBAL)
+========================= -->
+<div class="bottom-nav">
+  <a class="nav-item active" onclick="openTabFromBottom('home', this)">
+    🏠
+    <span>Home</span>
+  </a>
+
+  <a class="nav-item" onclick="openTabFromBottom('clients', this)">
+    👥
+    <span>Clients</span>
+  </a>
+
+  <a class="nav-item" onclick="openTabFromBottom('invest', this)">
+    💼
+    <span>Invest</span>
+  </a>
+
+  <a class="nav-item" onclick="openTabFromBottom('reports', this)">
+    📊
+    <span>Reports</span>
+  </a>
+
+  <a class="nav-item" onclick="openTabFromBottom('settings', this)">
+    ⚙️
+    <span>Settings</span>
+  </a>
+</div>
+
+
+<!-- Client Edit Modal -->
+<div id="clientModal" class="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+
+
+    <h3>Edit Client</h3>
+    <div class="input-group"><label>Name</label><input id="m_edit_name" /></div>
+    <div class="input-group"><label>Mobile</label><input id="m_edit_mobile" /></div>
+    <div class="input-group"><label>Email</label><input id="m_edit_email" /></div>
+    <div class="input-group"><label>PAN</label><input id="m_edit_pan" /></div>
+    <div class="input-group"><label>DOB</label><input id="m_edit_dob" type="date" /></div>
+    <div class="input-group"><label>KYC</label>
+      <select id="m_edit_kyc"><option value="">Select</option><option>Completed</option><option>Pending</option><option>Not Done</option></select>
+    </div>
+    <div class="input-group"><label>Risk</label>
+      <select id="m_edit_risk"><option value="">Select</option><option>Conservative</option><option>Moderate</option><option>Aggressive</option></select>
+    </div>
+    <div class="input-group"><label>Address</label><textarea id="m_edit_address" rows="2" style="resize:vertical;padding:10px;border-radius:8px"></textarea></div>
+
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn-small btn-cancel" id="clientCancelBtn">Cancel</button>
+      <button class="btn-small btn-edit" id="clientSaveBtn">Save</button>
+      <button class="btn-small btn-delete" id="clientDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Investment Edit Modal -->
+<div id="invModal" class="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3>Edit Investment</h3>
+
+<label>AMC Name</label>
+<input id="edit_inv_amc" />
+
+    <div class="input-group"><label>Scheme</label><input id="m_inv_scheme" /></div>
+
+<label>Scheme Category</label>
+<input id="edit_inv_scheme_category" />
+
+    <div class="input-group"><label>Amount</label><input id="m_inv_amount" type="number" /></div>
+    <div class="input-group"><label>Date</label><input id="m_inv_date" type="date" /></div>
+    <div class="input-group"><label>Type</label><select id="m_inv_type"><option value="">Select</option><option>SIP</option><option>Lumpsum</option></select></div>
+    <div class="input-group"><label>NAV</label><input id="m_inv_nav" /></div>
+    <div class="input-group"><label>Folio</label><input id="m_inv_folio" /></div>
+
+<label>Joint Holder</label>
+<input id="edit_inv_joint_holder" />
+
+<label>Nominee</label>
+<input id="edit_inv_nominee" />
+
+<label>Category</label>
+<select id="edit_inv_category">
+  <option value="">Select</option>
+  <option value="Resident Indian">Resident Indian</option>
+  <option value="NRI">NRI</option>
+</select>
+
+<label>Status</label>
+<select id="edit_inv_status">
+  <option value="">Select</option>
+  <option value="Active">Active</option>
+  <option value="Inactive">Inactive</option>
+</select>
+
+<label>Bank Account No</label>
+<input id="edit_inv_bank_acc" />
+
+<label>Bank Name</label>
+<input id="edit_inv_bank_name" />
+
+<label>MICR</label>
+<input id="edit_inv_micr" />
+
+<label>IFSC</label>
+<input id="edit_inv_ifsc" />
+
+<label>Pay Mode</label>
+<select id="edit_inv_pay_mode">
+  <option value="">Select</option>
+  <option value="Warrant">Warrant</option>
+  <option value="Active">Active</option>
+</select>
+
+<label>Current Value</label>
+<input id="edit_inv_current_value" type="number" />
+
+    <div class="input-group"><label>Address</label><input id="m_inv_address" /></div>
+    <div class="input-group"><label>Notes</label><textarea id="m_inv_notes" rows="2" style="resize:vertical;padding:10px;border-radius:8px"></textarea></div>
+
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn-small btn-cancel" id="invCancelBtn">Cancel</button>
+      <button class="btn-small btn-edit" id="invSaveBtn">Save</button>
+      <button class="btn-small btn-delete" id="invDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+function restoreBackupData() {
+  const input = document.getElementById("restoreBackupTextarea");
+
+  if (!input.value.trim()) {
+    alert("Please paste backup JSON data.");
+    return;
+  }
+
+  let backup;
+  try {
+    backup = JSON.parse(input.value);
+  } catch {
+    alert("Invalid JSON format.");
+    return;
+  }
+
+  if (!backup.clients || !backup.investments) {
+    alert("Invalid backup structure.");
+    return;
+  }
+
+  if (!confirm("This will overwrite ALL existing data. Continue?")) {
+    return;
+  }
+
+  // ✅ USE CORRECT STORAGE KEYS
+  localStorage.setItem(LS_CLIENTS, JSON.stringify(backup.clients));
+  localStorage.setItem(LS_INVESTMENTS, JSON.stringify(backup.investments));
+
+  showToast("Backup restored successfully");
+
+  closeRestoreModal();
+
+  // reload data properly
+  loadClients();
+  loadInvestments();
+}
+
+function openRestoreModal() {
+  document.getElementById("restoreModal").style.display = "flex";
+}
+
+function closeRestoreModal() {
+  document.getElementById("restoreModal").style.display = "none";
+  document.getElementById("restoreBackupTextarea").value = "";
+}
+
+
+function filterReportClients(){}
+
+function showMore(btn, selector){
+  const cards = document.querySelectorAll(selector);
+  const hidden = [...cards].filter(c => c.style.display === 'none');
+
+  if (hidden.length) {
+    hidden[0].style.display = 'block';
+    if (hidden.length === 1) btn.innerText = 'Show less';
+  } else {
+    cards.forEach((c, i) => c.style.display = i ? 'none' : 'block');
+    btn.innerText = 'Show more';
+  }
+}
+
+
+function filterClients(){
+  const q = $('searchClientBox').value.toLowerCase().trim();
+
+  if(!q){
+    renderClients(clients);   // show full list once
+    return;
+  }
+
+  const filtered = clients.filter(c =>
+    c.name.toLowerCase().includes(q)
+  );
+
+  renderClients(filtered);
+}
+
+
+function getClientInvestments(clientId){
+  const investments = getData('investments');
+  return investments.filter(inv => inv.clientId === clientId);
+}
+
+
+/* =========================
+   CONSTANTS
+========================= */
+const DEFAULT_PIN = '1234';
+const LS_PIN = 'app_pin';
+const LS_CLIENTS = 'clients';
+const LS_INVESTMENTS = 'investments';
+
+/* =========================
+   HELPERS
+========================= */
+const $ = id => document.getElementById(id);
+const getData = k => JSON.parse(localStorage.getItem(k) || '[]');
+const setData = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+
+function showToast(msg){
+  const t = $('toast');
+  t.innerText = msg;
+  t.style.display = 'block';
+  setTimeout(()=>t.style.display='none',1500);
+}
+
+$('inv_client_input').oninput = function(){
+  const q = this.value.toLowerCase().trim();
+  const box = $('clientSuggestions');
+
+  if(!q){
+    box.style.display = 'none';
+    return;
+  }
+
+  const matches = clientIndex.filter(c =>
+    c.name.toLowerCase().includes(q)
+  );
+
+box.innerHTML = matches.map(c => `
+  <div class="suggestion-item"
+       onclick="selectClient('${c.id}')">
+    <div style="font-weight:600">${c.name}</div>
+    <div style="font-size:12px;color:#6b7280">${c.mobile}</div>
+  </div>
+`).join('');
+
+  box.style.display = matches.length ? 'block' : 'none';
+};
+
+const invClientInput = document.getElementById('inv_client_input');
+const invClientId = document.getElementById('inv_client_id');
+
+function resetClientReportVisibility(){
+  const cards = document.querySelectorAll('.client-report');
+  cards.forEach((c, i) => {
+    c.style.display = i === 0 ? 'block' : 'none';
+  });
+  currentClientReport = 0;
+}
+
+/* =========================
+   LOGIN
+========================= */
+function checkLogin(){
+  if(!localStorage.getItem(LS_PIN)){
+    localStorage.setItem(LS_PIN, DEFAULT_PIN);
+  }
+
+  if(sessionStorage.getItem('logged_in')==='yes'){
+    $('loginScreen').style.display='none';
+    $('appContainer').style.display='block';
+    openTab('home');
+    loadClients();
+    loadInvestments();
+  } else {
+    $('loginScreen').style.display='flex';
+    $('appContainer').style.display='none';
+  }
+}
+
+function login(){
+  if($('loginPin').value === localStorage.getItem(LS_PIN)){
+    sessionStorage.setItem('logged_in','yes');
+    checkLogin();
+  } else {
+    alert('Incorrect PIN');
+  }
+}
+
+function logout(){
+  sessionStorage.removeItem('logged_in');
+  location.reload();
+}
+
+function changePin(){
+  if($('currentPin').value !== localStorage.getItem(LS_PIN)){
+    showToast('Wrong current PIN');
+    return;
+  }
+  if($('newPin').value !== $('confirmPin').value){
+    showToast('PIN mismatch');
+    return;
+  }
+  localStorage.setItem(LS_PIN, $('newPin').value);
+  showToast('PIN updated');
+}
+
+/* =========================
+   TABS
+========================= */
+
+function openTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+
+  document.querySelector(`.tab[data-tab="${id}"]`)?.classList.add('active');
+  document.getElementById(id).style.display='block';
+
+  // 🔥 sync bottom nav
+  document.querySelectorAll('.bottom-nav .nav-item')
+    .forEach(n=>n.classList.remove('active'));
+
+  document
+    .querySelector(`.bottom-nav .nav-item[onclick*="${id}"]`)
+    ?.classList.add('active');
+
+  if(id==='reports') renderReports();
+}
+
+function openTabFromBottom(id, el){
+  openTab(id);
+  document.querySelectorAll('.bottom-nav .nav-item')
+    .forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* =========================
+   CLIENTS (ADD + EDIT + DELETE)
+========================= */
+let clients = [];
+let editingClientId = null;
+
+function loadClients(){
+  clients = getData(LS_CLIENTS);
+
+  clients.sort((a, b) =>
+    a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+  );
+
+  renderClients(clients);
+  buildClientIndex();
+}
+
+let clientIndex = [];
+
+function buildClientIndex(){
+  clientIndex = clients.map(c => ({
+    id: c.id,
+    name: c.name,
+    mobile: c.mobile || '',
+    address: c.address || ''
+  }));
+}
+
+function addClient(){
+
+  const name = $('client_name').value.trim();
+  const mobile = $('client_mobile').value.trim();
+
+  /* 🚨 HARD STOP — NOTHING ADDED */
+  if(name === '' || mobile === ''){
+    showToast('Name & Mobile are mandatory');
+    return;
+  }
+
+  /* Optional: mobile sanity check */
+  if(!/^\d{10}$/.test(mobile)){
+    showToast('Enter valid 10-digit mobile number');
+    return;
+  }
+
+  const newClient = {
+    id: 'c_' + Date.now(),
+    name,
+    mobile,
+    email: $('client_email').value.trim(),
+    pan: $('client_pan').value.trim(),
+    dob: $('client_dob').value,
+    kyc: $('client_kyc').value,
+    risk: $('client_risk').value,
+    address: $('client_address').value.trim()
+  };
+
+  clients.push(newClient);
+  setData(LS_CLIENTS, clients);
+
+  showToast('Client added successfully');
+  loadClients();
+
+  /* ✅ CLEAR FORM */
+  document.querySelectorAll(
+    '#clients input, #clients textarea, #clients select'
+  ).forEach(el => el.value = '');
+}
+
+ 
+
+function renderClients(list = clients){
+  const box = $('clientList');
+
+  if (!list.length) {
+    box.innerHTML = 'No clients';
+    return;
+  }
+
+  box.innerHTML =
+    list.map((c, i) => `
+      <div class="client-card" style="${i ? 'display:none' : ''}">
+        <div class="client-title">${c.name}</div>
+
+        <div class="client-line"><b>Mobile:</b> ${c.mobile || '—'}</div>
+        <div class="client-line"><b>Email:</b> ${c.email || '—'}</div>
+        <div class="client-line"><b>PAN:</b> ${c.pan || '—'}</div>
+        <div class="client-line"><b>DOB:</b> ${c.dob || '—'}</div>
+        <div class="client-line"><b>KYC:</b> ${c.kyc || '—'}</div>
+        <div class="client-line"><b>Risk:</b> ${c.risk || '—'}</div>
+        <div class="client-line"><b>Address:</b> ${c.address || '—'}</div>
+
+        <div class="btn-row">
+          <button class="btn-small btn-edit" onclick="editClient('${c.id}')">Edit</button>
+          <button class="btn-small btn-delete" onclick="deleteClient('${c.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('')
+    +
+    (list.length > 1
+      ? `<button class="show-more-btn" onclick="showMore(this,'.client-card')">Show more</button>`
+      : '');
+}
+
+function editClient(id){
+  const c = clients.find(x => x.id === id);
+  if(!c) return;
+
+  editingClientId = id;
+
+  $('m_edit_name').value = c.name || '';
+  $('m_edit_mobile').value = c.mobile || '';
+  $('m_edit_email').value = c.email || '';
+  $('m_edit_pan').value = c.pan || '';
+  $('m_edit_dob').value = c.dob || '';
+  $('m_edit_kyc').value = c.kyc || '';
+  $('m_edit_risk').value = c.risk || '';
+  $('m_edit_address').value = c.address || '';
+
+  $('clientModal').style.display = 'flex';
+}
+
+$('clientSaveBtn').onclick = () => {
+  if(!editingClientId) return;
+
+  const c = clients.find(x => x.id === editingClientId);
+  if(!c) return;
+
+  c.name = $('m_edit_name').value;
+  c.mobile = $('m_edit_mobile').value;
+  c.email = $('m_edit_email').value;
+  c.pan = $('m_edit_pan').value;
+  c.dob = $('m_edit_dob').value;
+  c.kyc = $('m_edit_kyc').value;
+  c.risk = $('m_edit_risk').value;
+  c.address = $('m_edit_address').value;
+
+  setData(LS_CLIENTS, clients);
+
+  showToast('Client updated successfully');
+
+  setTimeout(() => {
+    $('clientModal').style.display = 'none';
+    loadClients();
+  }, 300);
+};
+
+$('clientDeleteBtn').onclick = ()=>{
+  deleteClient(editingClientId);
+  $('clientModal').style.display='none';
+};
+
+$('clientCancelBtn').onclick = ()=> $('clientModal').style.display='none';
+
+function deleteClient(id){
+  if(!confirm('Delete client?')) return;
+
+  clients = clients.filter(c=>c.id!==id);
+  setData(LS_CLIENTS, clients);
+
+  let inv = getData(LS_INVESTMENTS);
+  inv = inv.filter(i=>i.clientId!==id);
+  setData(LS_INVESTMENTS, inv);
+
+  showToast('Client deleted');
+  loadClients();
+  loadInvestments();
+}
+
+$('addClientBtn').onclick = addClient;
+
+function selectClient(id){
+  const c = clients.find(x => x.id === id);
+  if(!c) return;
+
+  $('inv_client_input').value = c.name;
+  $('inv_client_id').value = c.id;
+  $('inv_address').value = c.address || '';
+
+  $('clientSuggestions').style.display = 'none';
+}
+
+/* =========================
+   INVESTMENTS (ADD + EDIT + DELETE)
+========================= */
+let investments = [];
+let editingInvId = null;
+
+function loadInvestments(clientId = null){
+  const all = getData(LS_INVESTMENTS);
+  investments = all; // keep master list
+
+  if(clientId){
+    renderInvestments(all.filter(i => i.clientId === clientId));
+  } else {
+    renderInvestments(all);
+  }
+}
+
+/* =========================
+   INVESTMENTS (ADD)
+========================= */
+
+function addInvestment(){
+
+  if(!$('inv_client_id').value || !$('inv_scheme').value){
+    showToast('Client & Scheme required');
+    return;
+  }
+
+  const inv = {
+    id: 'i_' + Date.now(),
+    clientId: $('inv_client_id').value,
+    clientName: $('inv_client_input').value,
+
+    amc: $('inv_amc').value,
+    category: $('inv_category').value,
+    scheme: $('inv_scheme').value,
+    type: $('inv_type').value,
+
+    amount: +$('inv_amount').value || 0,
+    nav: $('inv_nav').value,
+    folio: $('inv_folio').value,
+
+    jointHolder: $('inv_joint_holder').value,
+    nominee: $('inv_nominee').value,
+    residency: $('inv_residency').value,
+    status: $('inv_status').value,
+
+    bankAcc: $('inv_bank_acc').value,
+    bankName: $('inv_bank_name').value,
+    micr: $('inv_micr').value,
+    ifsc: $('inv_ifsc').value,
+    payMode: $('inv_pay_mode').value,
+
+    currentValue: +$('inv_current_value').value || 0,
+    address: $('inv_address').value,
+    date: $('inv_date').value,
+    notes: $('inv_notes').value
+  };
+
+  investments.push(inv);
+  setData(LS_INVESTMENTS, investments);
+
+  showToast('Investment added successfully');
+
+  loadInvestments();
+  clearInvestmentForm();
+}
+
+function clearInvestmentForm(){
+
+  document
+    .querySelectorAll('#invest input, #invest textarea, #invest select')
+    .forEach(el => el.value = '');
+
+  // hide suggestions
+  $('clientSuggestions').style.display = 'none';
+}
+
+
+function renderInvestments(list = investments){
+
+  const box = $('invList');
+
+  if(!list.length){
+    box.innerHTML = 'No investments';
+    return;
+  }
+
+  // ✅ SORT by Investor Name
+  const sorted = [...list].sort((a,b) =>
+    (a.clientName || '').localeCompare(b.clientName || '')
+  );
+
+  box.innerHTML =
+    sorted.map((i, index) => `
+      <div class="invest-card" style="${index ? 'display:none' : ''}">
+
+        <!-- Client -->
+        <div class="inv-client-title">
+          ${i.clientName}
+        </div>
+
+        <!-- BASIC DETAILS -->
+        <div class="invest-line"><span>Scheme:</span> ${i.scheme || '—'}</div>
+        <div class="invest-line"><span>AMC:</span> ${i.amc || '—'}</div>
+        <div class="invest-line"><span>Category:</span> ${i.category || '—'}</div>
+        <div class="invest-line"><span>Type:</span> ${i.type || '—'}</div>
+
+        <div class="invest-divider"></div>
+
+        <!-- FINANCIAL -->
+        <div class="invest-line"><span>Amount:</span> ₹ ${Number(i.amount || 0).toLocaleString('en-IN')}</div>
+        <div class="invest-line"><span>NAV:</span> ${i.nav || '—'}</div>
+        <div class="invest-line"><span>Current Value:</span> ₹ ${Number(i.currentValue || 0).toLocaleString('en-IN')}</div>
+
+        <div class="invest-divider"></div>
+
+        <!-- FOLIO -->
+        <div class="invest-line"><span>Folio No:</span> ${i.folio || '—'}</div>
+        <div class="invest-line"><span>Joint Holder:</span> ${i.jointHolder || '—'}</div>
+        <div class="invest-line"><span>Nominee:</span> ${i.nominee || '—'}</div>
+
+        <div class="invest-divider"></div>
+
+        <!-- STATUS -->
+        <div class="invest-line"><span>Residency:</span> ${i.residency || '—'}</div>
+        <div class="invest-line"><span>Status:</span> ${i.status || '—'}</div>
+        <div class="invest-line"><span>Pay Mode:</span> ${i.payMode || '—'}</div>
+
+        <div class="invest-divider"></div>
+
+        <!-- BANK -->
+        <div class="invest-line"><span>Bank Name:</span> ${i.bankName || '—'}</div>
+        <div class="invest-line"><span>Account No:</span> ${i.bankAcc || '—'}</div>
+        <div class="invest-line"><span>IFSC:</span> ${i.ifsc || '—'}</div>
+        <div class="invest-line"><span>MICR:</span> ${i.micr || '—'}</div>
+
+        <div class="invest-divider"></div>
+
+        <!-- EXTRA -->
+        <div class="invest-line"><span>Date:</span> ${i.date || '—'}</div>
+        <div class="invest-line"><span>Address:</span> ${i.address || '—'}</div>
+        <div class="invest-line"><span>Notes:</span> ${i.notes || '—'}</div>
+
+        <div class="invest-divider"></div>
+
+        <!-- ACTIONS -->
+        <div class="btn-row">
+          <button class="btn-small btn-edit" onclick="editInvestment('${i.id}')">Edit</button>
+          <button class="btn-small btn-delete" onclick="deleteInvestment('${i.id}')">Delete</button>
+        </div>
+
+      </div>
+    `).join('') +
+
+    (sorted.length > 1
+      ? `<button class="show-more-btn" onclick="showMore(this,'.invest-card')">Show more</button>`
+      : '');
+}
+
+
+function editInvestment(id){
+  const i = investments.find(x => x.id === id);
+  if(!i) return;
+
+  editingInvId = id;
+
+  // BASIC
+  $('edit_inv_amc').value            = i.amc || '';
+  $('m_inv_scheme').value            = i.scheme || '';
+  $('edit_inv_scheme_category').value= i.category || '';
+  $('m_inv_amount').value            = i.amount || '';
+  $('m_inv_date').value              = i.date || '';
+  $('m_inv_type').value              = i.type || '';
+  $('m_inv_nav').value               = i.nav || '';
+  $('m_inv_folio').value             = i.folio || '';
+
+  // HOLDERS
+  $('edit_inv_joint_holder').value   = i.jointHolder || '';
+  $('edit_inv_nominee').value        = i.nominee || '';
+
+  // STATUS
+  $('edit_inv_category').value       = i.residency || '';
+  $('edit_inv_status').value         = i.status || '';
+
+  // BANK
+  $('edit_inv_bank_acc').value       = i.bankAcc || '';
+  $('edit_inv_bank_name').value      = i.bankName || '';
+  $('edit_inv_micr').value           = i.micr || '';
+  $('edit_inv_ifsc').value           = i.ifsc || '';
+  $('edit_inv_pay_mode').value       = i.payMode || '';
+
+  // VALUE
+  $('edit_inv_current_value').value  = i.currentValue || '';
+
+  // EXTRA
+  $('m_inv_address').value           = i.address || '';
+  $('m_inv_notes').value             = i.notes || '';
+
+  $('invModal').style.display = 'flex';
+}
+
+$('invSaveBtn').onclick = () => {
+  if(!editingInvId) return;
+
+  const i = investments.find(x => x.id === editingInvId);
+  if(!i) return;
+
+  i.amc          = $('edit_inv_amc').value;
+  i.scheme       = $('m_inv_scheme').value;
+  i.category     = $('edit_inv_scheme_category').value;
+  i.amount       = +$('m_inv_amount').value || 0;
+  i.date         = $('m_inv_date').value;
+  i.type         = $('m_inv_type').value;
+  i.nav          = $('m_inv_nav').value;
+  i.folio        = $('m_inv_folio').value;
+
+  i.jointHolder  = $('edit_inv_joint_holder').value;
+  i.nominee      = $('edit_inv_nominee').value;
+
+  i.residency    = $('edit_inv_category').value;
+  i.status       = $('edit_inv_status').value;
+
+  i.bankAcc      = $('edit_inv_bank_acc').value;
+  i.bankName     = $('edit_inv_bank_name').value;
+  i.micr         = $('edit_inv_micr').value;
+  i.ifsc         = $('edit_inv_ifsc').value;
+  i.payMode      = $('edit_inv_pay_mode').value;
+
+  i.currentValue = +$('edit_inv_current_value').value || 0;
+
+  i.address      = $('m_inv_address').value;
+  i.notes        = $('m_inv_notes').value;
+
+  setData(LS_INVESTMENTS, investments);
+
+  showToast('Investment updated successfully');
+
+  setTimeout(() => {
+    $('invModal').style.display = 'none';
+    loadInvestments();
+  }, 300);
+};
+
+$('invDeleteBtn').onclick = ()=>{
+  deleteInvestment(editingInvId);
+  $('invModal').style.display='none';
+};
+
+$('invCancelBtn').onclick = ()=> $('invModal').style.display='none';
+
+function deleteInvestment(id){
+  investments = getData(LS_INVESTMENTS).filter(i=>i.id!==id);
+  setData(LS_INVESTMENTS, investments);
+
+  // reload only current client investments
+
+loadInvestments();
+
+showToast('Deleted');
+
+}
+
+function filterInvestments(){
+  const q = $('invSearchBox').value.toLowerCase().trim();
+  if(!q){
+    renderInvestments(investments);
+    return;
+  }
+
+  const filtered = investments.filter(i =>
+    i.clientName.toLowerCase().includes(q) ||
+    i.scheme.toLowerCase().includes(q)
+  );
+
+  renderInvestments(filtered);
+}
+
+/* =========================
+   REPORTS (₹ FIXED)
+========================= */
+
+function renderPortfolioSummary(){
+
+  const inv = getData(LS_INVESTMENTS);
+
+  let totalAum = 0;
+  let sipTotal = 0;
+  let lumpTotal = 0;
+
+  inv.forEach(i => {
+    const val = Number(i.currentValue || 0);
+    totalAum += val;
+
+    if((i.type || '').toLowerCase() === 'sip'){
+      sipTotal += val;
+    } else {
+      lumpTotal += val;
+    }
+  });
+
+  $('r_totalAum').innerText = '₹ ' + totalAum.toLocaleString('en-IN');
+  $('r_sip_amt').innerText = '₹ ' + sipTotal.toLocaleString('en-IN');
+  $('r_lump_amt').innerText = '₹ ' + lumpTotal.toLocaleString('en-IN');
+}
+
+function renderReports(){
+
+  renderPortfolioSummary();
+
+  investments = getData(LS_INVESTMENTS);
+
+  // ✅ FIXED: proper sorting (ONLY ONCE)
+  clients = getData(LS_CLIENTS).sort((a, b) =>
+    a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+  );
+
+  const box = document.getElementById('consolidatedReport');
+
+  if(!clients.length){
+    box.innerHTML = 'No clients';
+    return;
+  }
+
+  box.innerHTML =
+    clients.map((c, idx) => {
+
+      const invs = investments.filter(i => i.clientId === c.id);
+      if(!invs.length) return '';
+
+      const totalInvested = invs.reduce((s,i)=>s+(+i.amount||0),0);
+      const currentValue  = invs.reduce((s,i)=>s+(+i.currentValue||0),0);
+      const gain          = currentValue - totalInvested;
+      const gainPct       = totalInvested
+        ? ((gain/totalInvested)*100).toFixed(2)
+        : 0;
+
+      return `
+        <div class="report-card client-report"
+             style="${idx === 0 ? '' : 'display:none'}">
+
+          <div class="inv-client-title">${c.name}</div>
+
+          <div>Total Invested: ₹ ${totalInvested.toLocaleString('en-IN')}</div>
+          <div>Current Value: ₹ ${currentValue.toLocaleString('en-IN')}</div>
+          <div>Overall Gain: ₹ ${gain.toLocaleString('en-IN')} (${gainPct}%)</div>
+
+          <div class="client-divider"></div>
+
+          ${invs.map((i,n)=>`
+            <div class="client-line"><b>${n+1}.</b></div>
+            <div class="client-line"><b>AMC:</b> ${i.amc || '—'}</div>
+            <div class="client-line"><b>Scheme:</b> ${i.scheme || '—'}</div>
+            <div class="client-line"><b>Folio:</b> ${i.folio || '—'}</div>
+            <div class="client-line">
+              <b>Current Value:</b>
+              ₹ ${Number(i.currentValue||0).toLocaleString('en-IN')}
+            </div>
+            <div class="client-divider"></div>
+          `).join('')}
+
+        </div>
+      `;
+    }).join('') +
+
+    (clients.length > 1
+      ? `<button class="show-more-btn"
+           onclick="showNextClientReport()">
+           Show more
+         </button>`
+      : '');
+
+  renderAmcSummary();
+  renderSchemeSummary();
+
+  resetClientReportVisibility();
+  resetShowMoreState();
+}
+
+
+function renderConsolidatedClientReport(clientList = clients){
+
+  // ✅ ALWAYS SORT CLIENTS A → Z
+  clientList = [...clientList].sort((a, b) =>
+    a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
+  );
+
+  const box = $('consolidatedReport');
+
+  if(!clientList.length){
+    box.innerHTML = 'No clients found';
+    return;
+  }
+
+  box.innerHTML =
+    clientList.map((c, idx) => {
+
+      const inv = investments.filter(i => i.clientId === c.id);
+      if(!inv.length) return '';
+
+      const totalInvested = inv.reduce((s,i)=>s+(i.amount||0),0);
+      const currentValue  = inv.reduce((s,i)=>s+(i.currentValue||0),0);
+      const gain          = currentValue - totalInvested;
+      const gainPct       = totalInvested
+        ? ((gain/totalInvested)*100).toFixed(2)
+        : 0;
+
+      return `
+        <div class="report-card client-report"
+             style="${idx === 0 ? '' : 'display:none'}">
+
+          <div class="inv-client-title">${c.name}</div>
+
+          <div>Total Invested: ₹ ${totalInvested.toLocaleString('en-IN')}</div>
+          <div>Current Value: ₹ ${currentValue.toLocaleString('en-IN')}</div>
+          <div>Overall Gain: ₹ ${gain.toLocaleString('en-IN')} (${gainPct}%)</div>
+
+          <div class="client-divider"></div>
+
+          ${inv.map((i,n)=>`
+            <div class="client-line"><b>${n+1}.</b></div>
+            <div class="client-line"><b>AMC:</b> ${i.amc || '—'}</div>
+            <div class="client-line"><b>Scheme:</b> ${i.scheme || '—'}</div>
+            <div class="client-line"><b>Folio:</b> ${i.folio || '—'}</div>
+            <div class="client-line">
+              <b>Current Value:</b>
+              ₹ ${Number(i.currentValue||0).toLocaleString('en-IN')}
+            </div>
+            <div class="client-divider"></div>
+          `).join('')}
+
+        </div>
+      `;
+    }).join('') +
+
+    (clientList.length > 1
+      ? `<button class="show-more-btn"
+           onclick="showNextClientReport()">
+           Show more
+         </button>`
+      : '');
+
+  resetClientReportVisibility();
+}
+
+
+function renderAmcSummary(){
+
+  const investments = getData(LS_INVESTMENTS);
+  const box = $('amcReportList');
+
+  if(!investments.length){
+    box.innerHTML = 'No data';
+    return;
+  }
+
+  const amcMap = {};
+
+  investments.forEach(i => {
+    if(!i.amc) return;
+
+    if(!amcMap[i.amc]){
+      amcMap[i.amc] = {
+        total: 0,
+        schemes: {}
+      };
+    }
+
+    const val = Number(i.currentValue || 0);
+    amcMap[i.amc].total += val;
+
+    const scheme = i.scheme || 'Unnamed Scheme';
+
+    if(!amcMap[i.amc].schemes[scheme]){
+      amcMap[i.amc].schemes[scheme] = {
+        sip: 0,
+        lump: 0
+      };
+    }
+
+    if((i.type || '').toLowerCase() === 'sip'){
+      amcMap[i.amc].schemes[scheme].sip += val;
+    } else {
+      amcMap[i.amc].schemes[scheme].lump += val;
+    }
+  });
+
+  // ✅ SORT AMC NAMES A → Z
+  box.innerHTML = Object.entries(amcMap)
+    .sort((a, b) =>
+      a[0].localeCompare(b[0], 'en', { sensitivity: 'base' })
+    )
+    .map(([amc, data]) => `
+      <div class="report-card">
+
+        <div class="inv-client-title">${amc}</div>
+
+        <div class="client-line">
+          <b>Total AUM:</b> ₹ ${data.total.toLocaleString('en-IN')}
+        </div>
+
+        <div class="client-divider"></div>
+
+        ${Object.entries(data.schemes).map(([scheme, s]) => `
+          <div class="client-line">
+            📌 <b>${scheme}</b> —
+            SIP: ₹ ${s.sip.toLocaleString('en-IN')} |
+            Lumpsum: ₹ ${s.lump.toLocaleString('en-IN')}
+          </div>
+        `).join('')}
+
+      </div>
+    `).join('');
+}
+
+function renderSchemeSummary(){
+
+  const investments = getData(LS_INVESTMENTS);
+  const box = $('schemeReportList');
+
+  if(!investments.length){
+    box.innerHTML = 'No data';
+    return;
+  }
+
+  // 🔹 AMC → Schemes → Total Value
+  const amcMap = {};
+
+  investments.forEach(i => {
+    if(!i.amc || !i.scheme) return;
+
+    if(!amcMap[i.amc]){
+      amcMap[i.amc] = {};
+    }
+
+    if(!amcMap[i.amc][i.scheme]){
+      amcMap[i.amc][i.scheme] = 0;
+    }
+
+    amcMap[i.amc][i.scheme] += Number(i.currentValue || 0);
+  });
+
+  // ✅ SORT AMC NAMES A → Z
+  box.innerHTML = Object.entries(amcMap)
+    .sort((a, b) =>
+      a[0].localeCompare(b[0], 'en', { sensitivity: 'base' })
+    )
+    .map(([amc, schemes]) => `
+      <div class="report-card">
+
+        <!-- AMC HEADER -->
+        <div class="inv-client-title">${amc}</div>
+
+        <div class="client-divider"></div>
+
+        <!-- SCHEMES UNDER AMC -->
+        ${Object.entries(schemes).map(([scheme, value]) => `
+          <div class="client-line">
+            📌 <b>${scheme}</b><br>
+            ₹ ${value.toLocaleString('en-IN')}
+          </div>
+        `).join('')}
+
+      </div>
+    `).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  $('addInvBtn').addEventListener('click', addInvestment);
+});
+
+function filterReportClients(){
+  const q = $('reportClientSearch').value.toLowerCase().trim();
+
+  if(!q){
+    renderConsolidatedClientReport(clients);
+    return;
+  }
+
+  const filtered = clients.filter(c =>
+    c.name.toLowerCase().includes(q)
+  );
+
+  renderConsolidatedClientReport(filtered);
+}
+
+function renderPortfolioSummary(){
+
+  const investments = getData(LS_INVESTMENTS);
+
+  let totalAum = 0;
+  let sipTotal = 0;
+  let lumpTotal = 0;
+
+  investments.forEach(i => {
+    const val = Number(i.currentValue || 0);
+    totalAum += val;
+
+    if ((i.type || '').toLowerCase() === 'sip') {
+      sipTotal += val;
+    } else {
+      lumpTotal += val;
+    }
+  });
+
+  // ✅ USE innerHTML + &#8377;
+  document.getElementById('r_totalAum').innerHTML =
+    `&#8377; ${totalAum.toLocaleString('en-IN')}`;
+
+  document.getElementById('r_sip_amt').innerHTML =
+    `&#8377; ${sipTotal.toLocaleString('en-IN')}`;
+
+  document.getElementById('r_lump_amt').innerHTML =
+    `&#8377; ${lumpTotal.toLocaleString('en-IN')}`;
+}
+
+let currentClientReport = 0;
+
+function showNextClientReport(){
+  const cards = document.querySelectorAll('.client-report');
+  if(!cards.length) return;
+
+  cards[currentClientReport].style.display = 'none';
+
+  currentClientReport++;
+  if(currentClientReport >= cards.length){
+    currentClientReport = 0;
+  }
+
+  cards[currentClientReport].style.display = 'block';
+}
+
+function resetShowMoreState() {
+  document.querySelectorAll('.report-card').forEach(card => {
+    const blocks = card.querySelectorAll('.scheme-block');
+    const btn = card.querySelector('.show-more-btn');
+
+    blocks.forEach((b, i) => {
+      b.style.display = i === 0 ? '' : 'none';
+    });
+
+    if (btn) {
+      btn.innerText = 'Show more';
+      btn.style.display = blocks.length > 1 ? '' : 'none';
+    }
+  });
+}
+
+function sendConsolidatedWhatsApp(){
+
+  const cards = document.querySelectorAll('.client-report');
+  const visibleCard = [...cards].find(
+    c => c.style.display !== 'none'
+  );
+
+  if(!visibleCard){
+    alert('No visible client report');
+    return;
+  }
+
+  let msg = '📊 *Consolidated Portfolio Report*\n\n';
+  msg += visibleCard.innerText;
+
+  const encoded = encodeURIComponent(msg);
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+}
+
+function sendConsolidatedEmail(){
+
+  const cards = document.querySelectorAll('.client-report');
+  const visibleCard = [...cards].find(
+    c => c.style.display !== 'none'
+  );
+
+  if(!visibleCard){
+    alert('No visible client report');
+    return;
+  }
+
+  const subject = encodeURIComponent('Consolidated Portfolio Report');
+  const body = encodeURIComponent(visibleCard.innerText);
+
+  window.location.href =
+    `mailto:?subject=${subject}&body=${body}`;
+}
+
+/* =========================
+   INIT
+========================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+  checkLogin();
+  autoBackupIfNeeded();
+  updateLastBackupInfo();
+});
+
+
+
+async function fetchNAV(){
+  const schemeName = $('inv_scheme').value.trim();
+
+  if(!schemeName){
+    alert('Enter scheme name first');
+    return;
+  }
+
+  try{
+    showToast('Fetching NAV...');
+
+    const res = await fetch(
+      'https://api.mfapi.in/mf/search?q=' + encodeURIComponent(schemeName)
+    );
+
+    const data = await res.json();
+
+    if(!data.length){
+      alert('Scheme not found');
+      return;
+    }
+
+    const schemeCode = data[0].schemeCode;
+
+    const navRes = await fetch(
+      'https://api.mfapi.in/mf/' + schemeCode
+    );
+
+    const navData = await navRes.json();
+
+    const latest = navData.data[0];
+
+    $('inv_nav').value = latest.nav;
+
+    showToast(`NAV updated (${latest.date})`);
+
+  }catch(e){
+    alert('NAV fetch failed. Try again.');
+    console.error(e);
+  }
+}
+
+function updateLastBackupInfo(){
+  const el = document.getElementById('lastBackupInfo');
+  if(!el) return;
+
+  const last = localStorage.getItem('last_backup_date');
+  if(!last){
+    el.innerText = 'No backup taken yet';
+    return;
+  }
+
+  const d = new Date(last);
+  el.innerText = 'Last backup: ' + d.toLocaleString();
+}
+
+function autoBackupIfNeeded(){
+  const last = localStorage.getItem('last_backup_date');
+  if(!last){
+    localStorage.setItem('last_backup_date', new Date().toISOString());
+  }
+}
+
+
+function exportPrintableBackup(){
+
+  // 🔒 Must open immediately (Safari rule)
+  const win = window.open('about:blank', '_blank');
+  if(!win){
+    alert('Popup blocked. Please allow popups.');
+    return;
+  }
+
+  const clients = getData(LS_CLIENTS).sort((a,b)=>
+    a.name.localeCompare(b.name,'en',{sensitivity:'base'})
+  );
+
+  const investments = getData(LS_INVESTMENTS).sort((a,b)=>
+    (a.clientName||'').localeCompare(b.clientName||'','en',{sensitivity:'base'})
+  );
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FinTrust Printable Backup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* ===== Page Base ===== */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  padding: 24px;
+  font-size: 14px;          /* ⭐ MAIN FIX */
+  color: #222;
+  line-height: 1.6;
+}
+
+h2{
+  text-align:center;
+  color:#065f46;
+  margin-bottom:4px;
+}
+
+.date{
+  text-align:center;
+  font-size:13px;
+  color:#555;
+  margin-bottom:20px;
+}
+
+/* ===== Investor Card ===== */
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  page-break-after: always; /* ⭐ one investor = one page */
+}
+
+.client-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:6px;
+  color:#111827;
+}
+
+.client-info{
+  font-size:14px;
+  margin:3px 0;
+}
+
+.client-info span{
+  color:#6b7280;
+  font-weight:600;
+}
+
+.line{
+  font-size:14px;
+  margin:4px 0;
+}
+
+.line span{
+  color:#6b7280;
+  font-weight:600;
+}
+
+.divider{
+  height:1px;
+  background:#e5e7eb;
+  margin:10px 0;
+}
+
+.footer{
+  text-align:center;
+  font-size:12px;
+  color:#6b7280;
+  margin-top:30px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📦 FinTrust Printable Backup</h2>
+<div class="date">Generated on: ${new Date().toLocaleString()}</div>
+
+${clients.map(client => {
+
+  const invs = investments.filter(i => i.clientId === client.id);
+  if(!invs.length) return '';
+
+  return invs.map(inv => `
+    <div class="card">
+
+      <div class="client-title">${client.name}</div>
+
+      <!-- ✅ CLIENT DETAILS -->
+      <div class="client-info"><span>Mobile:</span> ${client.mobile || '—'}</div>
+      <div class="client-info"><span>Email:</span> ${client.email || '—'}</div>
+      <div class="client-info"><span>PAN:</span> ${client.pan || '—'}</div>
+      <div class="client-info"><span>DOB:</span> ${client.dob || '—'}</div>
+
+      <div class="divider"></div>
+
+      <!-- INVESTMENT -->
+      <div class="line"><span>Scheme:</span> ${inv.scheme || '—'}</div>
+      <div class="line"><span>AMC:</span> ${inv.amc || '—'}</div>
+      <div class="line"><span>Category:</span> ${inv.category || '—'}</div>
+      <div class="line"><span>Type:</span> ${inv.type || '—'}</div>
+
+      <div class="divider"></div>
+
+      <div class="line"><span>Amount:</span> ₹ ${Number(inv.amount||0).toLocaleString('en-IN')}</div>
+      <div class="line"><span>NAV:</span> ${inv.nav || '—'}</div>
+      <div class="line"><span>Current Value:</span> ₹ ${Number(inv.currentValue||0).toLocaleString('en-IN')}</div>
+
+      <div class="divider"></div>
+
+      <div class="line"><span>Folio No:</span> ${inv.folio || '—'}</div>
+      <div class="line"><span>Joint Holder:</span> ${inv.jointHolder || '—'}</div>
+      <div class="line"><span>Nominee:</span> ${inv.nominee || '—'}</div>
+
+      <div class="divider"></div>
+
+      <div class="line"><span>Residency:</span> ${inv.residency || '—'}</div>
+      <div class="line"><span>Status:</span> ${inv.status || '—'}</div>
+      <div class="line"><span>Pay Mode:</span> ${inv.payMode || '—'}</div>
+
+      <div class="divider"></div>
+
+      <div class="line"><span>Bank Name:</span> ${inv.bankName || '—'}</div>
+      <div class="line"><span>Account No:</span> ${inv.bankAcc || '—'}</div>
+      <div class="line"><span>IFSC:</span> ${inv.ifsc || '—'}</div>
+      <div class="line"><span>MICR:</span> ${inv.micr || '—'}</div>
+
+      <div class="divider"></div>
+
+      <div class="line"><span>Date:</span> ${inv.date || '—'}</div>
+      <div class="line"><span>Address:</span> ${inv.address || '—'}</div>
+      <div class="line"><span>Notes:</span> ${inv.notes || '—'}</div>
+
+    </div>
+  `).join('');
+
+}).join('')}
+
+<div class="footer">
+  Generated by FinTrust Mini Back Office
+</div>
+
+</body>
+</html>
+`;
+
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+
+
+function copyBackupToClipboard(){
+  const clients = getData(LS_CLIENTS).sort((a,b) =>
+    a.name.localeCompare(b.name, 'en', { sensitivity:'base' })
+  );
+
+  const investments = getData(LS_INVESTMENTS).sort((a,b) =>
+    (a.clientName || '').localeCompare(b.clientName || '', 'en', { sensitivity:'base' })
+  );
+
+  const data = {
+    date: new Date().toISOString(),
+    clients,
+    investments
+  };
+
+  navigator.clipboard.writeText(
+    JSON.stringify(data, null, 2)
+  ).then(()=>{
+    showToast('Backup copied. Paste into Notes / Email');
+  });
+}
+
+/* ==========================
+   FILE BACKUP SYSTEM
+========================== */
+
+
+function createBackupObject(){
+
+  const clients = getData(LS_CLIENTS);
+
+  const investments = getData(LS_INVESTMENTS);
+
+
+  return {
+
+    app:"FinTrust Mini Back Office",
+
+    version:"1.0",
+
+    backupDate:new Date().toISOString(),
+
+    clients:clients,
+
+    investments:investments
+
+  };
+
+}
+
+
+
+/* DOWNLOAD BACKUP FILE */
+
+function downloadBackupFile(){
+
+  const backup = createBackupObject();
+
+
+  const blob = new Blob(
+    [
+      JSON.stringify(backup,null,2)
+    ],
+    {
+      type:"application/json"
+    }
+  );
+
+
+  const url = URL.createObjectURL(blob);
+
+
+  const a=document.createElement("a");
+
+
+  a.href=url;
+
+
+  a.download =
+  "FinTrust_Backup_" +
+  new Date().toISOString().slice(0,10)
+  +
+  ".json";
+
+
+  document.body.appendChild(a);
+
+
+  a.click();
+
+
+  document.body.removeChild(a);
+
+
+  URL.revokeObjectURL(url);
+
+
+  showToast("Backup file downloaded");
+
+}
+
+
+
+
+
+/* SHARE BACKUP FILE - MOBILE */
+
+async function shareBackupFile(){
+
+
+ const backup=createBackupObject();
+
+
+ const blob=new Blob(
+   [
+    JSON.stringify(backup,null,2)
+   ],
+   {
+    type:"application/json"
+   }
+ );
+
+
+ const file=new File(
+   [
+    blob
+   ],
+   "FinTrust_Backup.json",
+   {
+    type:"application/json"
+   }
+ );
+
+
+
+ if(navigator.share && navigator.canShare({files:[file]})){
+
+
+   await navigator.share({
+
+     title:"FinTrust Backup",
+
+     text:"FinTrust Mini Back Office Backup",
+
+     files:[file]
+
+   });
+
+
+ }
+
+ else{
+
+   downloadBackupFile();
+
+ }
+
+}
+
+
+
+
+
+/* OPEN FILE SELECT */
+
+function openRestoreFile(){
+
+ document
+ .getElementById("restoreFileInput")
+ .click();
+
+}
+
+
+
+
+
+/* RESTORE FROM FILE */
+
+
+function restoreBackupFromFile(event){
+
+
+ const file =
+ event.target.files[0];
+
+
+ if(!file)return;
+
+
+
+ const reader=new FileReader();
+
+
+
+ reader.onload=function(e){
+
+
+  try{
+
+
+   const backup =
+   JSON.parse(e.target.result);
+
+
+
+   if(
+    !backup.clients ||
+    !backup.investments
+   ){
+
+    alert("Invalid backup file");
+
+    return;
+
+   }
+
+
+
+   if(
+   !confirm(
+   "This will replace current data. Continue?"
+   )
+   )
+   return;
+
+
+
+   localStorage.setItem(
+
+    LS_CLIENTS,
+
+    JSON.stringify(
+     backup.clients
+    )
+
+   );
+
+
+
+   localStorage.setItem(
+
+    LS_INVESTMENTS,
+
+    JSON.stringify(
+     backup.investments
+    )
+
+   );
+
+
+
+   showToast(
+   "Backup restored successfully"
+   );
+
+
+
+   loadClients();
+
+   loadInvestments();
+
+
+  }
+
+
+  catch(err){
+
+
+   alert(
+   "Backup file error"
+   );
+
+
+  }
+
+
+ };
+
+
+ reader.readAsText(file);
+
+
+}
+
+</script>
+
+<!-- Restore Backup Modal -->
+<div id="restoreModal" class="modal-backdrop">
+  <div class="modal">
+    <h3>♻️ Restore Backup Data</h3>
+
+    <p style="font-size:13px;color:#6b7280;margin-bottom:8px">
+      Paste the backup JSON below. This will overwrite all existing clients & investments.
+    </p>
+
+    <div class="input-group">
+      <textarea
+        id="restoreBackupTextarea"
+        rows="8"
+        placeholder="Paste backup JSON here..."
+      ></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-small btn-cancel" onclick="closeRestoreModal()">Cancel</button>
+      <button class="btn-small btn-edit" onclick="restoreBackupData()">Restore Now</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
