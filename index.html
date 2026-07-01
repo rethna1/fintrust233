@@ -610,276 +610,46 @@ textarea:focus{
   color:white;
 }
 
-/* =====================================
-   DESKTOP VIEW FIX
-   HOME CLIENTS INVESTMENTS REPORTS ONLY
-   DO NOT TOUCH MOBILE NAVIGATION
-===================================== */
+.disclaimer-box{
 
-@media (min-width:768px){
+background:#f8f9fa;
 
-  .wrapper{
+border-left:5px solid #e67e22;
 
-    max-width:1200px;
-    margin:25px auto;
-    padding:0 30px;
+font-size:13px;
 
-  }
+line-height:1.7;
 
-
-  /* make cards wider on desktop */
-
-  .wrapper .card,
-  .wrapper .client-card,
-  .wrapper .invest-card,
-  .wrapper .report-card{
-
-    width:100%;
-  }
-
-
-  /* better desktop spacing */
-
-  .wrapper{
-
-    display:block;
-
-  }
-
-
-  /* top content spacing */
-
-  .topbar{
-
-    padding-left:30px;
-    padding-right:30px;
-
-  }
-
-
-  /* tabs desktop */
-
-  .tabs{
-
-    padding-left:30px;
-
-  }
-
-}
-
-/* =========================================
-   DESKTOP CENTER ALIGNMENT FIX
-   HOME / CLIENTS / INVESTMENTS / REPORTS
-   Bottom navigation untouched
-========================================= */
-
-@media (min-width:768px){
-
-  body{
-    display:block;
-  }
-
-
-  .wrapper{
-
-    width:100%;
-    max-width:1200px;
-
-    margin-left:auto;
-    margin-right:auto;
-
-    padding-left:30px;
-    padding-right:30px;
-
-  }
-
-
-  /* center top sections also */
-
-  .topbar,
-  .tabs{
-
-    width:100%;
-    
-  }
-
-
-  .topbar > *,
-  .tabs > *{
-
-    max-width:1200px;
-
-  }
-
-
-  /* Cards fill centered area */
-
-  .wrapper .card,
-  .wrapper .client-card,
-  .wrapper .invest-card,
-  .wrapper .report-card{
-
-    width:100%;
-
-  }
-
-}
-
-/* =========================
-   PROFESSIONAL CENTER LAYOUT
-========================= */
-
-body{
-  margin:0;
-  padding:0;
-  background:#f3f4f6;
-  font-family:Arial, Helvetica, sans-serif;
-}
-
-
-/* Main App Container */
-#appContainer{
-
-  width:100%;
-  min-height:100vh;
+color:#555;
 
 }
 
 
-/* Main content wrapper */
-.wrapper{
+.copyright{
 
-  width:100%;
-  max-width:900px;        /* desktop professional width */
-  margin:0 auto;          /* ⭐ center horizontally */
-  padding:20px;
+text-align:center;
 
-}
+font-weight:600;
 
+font-size:13px;
 
-/* Top Header */
-.topbar{
-
-  max-width:900px;
-  margin:0 auto;
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  padding:15px 20px;
-
-  background:white;
-
-  border-radius:0 0 15px 15px;
-
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+margin-top:10px;
 
 }
 
+.disclaimer-box{
 
-/* Tabs */
-.tabs{
+background:#f8f9fa;
 
-  max-width:900px;
+border-left:5px solid #e67e22;
 
-  margin:15px auto;
+font-size:13px;
 
-  display:flex;
+line-height:1.7;
 
-  justify-content:center;
+color:#555;
 
-  gap:25px;
-
-  background:white;
-
-  padding:12px;
-
-  border-radius:12px;
-
-  box-shadow:0 3px 12px rgba(0,0,0,0.08);
-
-}
-
-
-/* Cards */
-.card{
-
-  background:white;
-
-  border-radius:18px;
-
-  padding:20px;
-
-  margin-bottom:18px;
-
-  box-shadow:
-  0 5px 18px rgba(0,0,0,0.08);
-
-}
-
-
-/* Mobile */
-@media(max-width:700px){
-
-.wrapper,
-.topbar,
-.tabs{
-
-  max-width:100%;
-
-}
-
-.wrapper{
-
- padding:12px;
-
-}
-
-
-.tabs{
-
- gap:10px;
-
- font-size:13px;
-
- overflow-x:auto;
-
-}
-
-}
-
-#appContainer{
-  max-width:900px;
-  margin:0 auto;
-}
-
-.centerApp{
-
-    width:100% !important;
-
-    max-width:1000px !important;
-
-    margin-left:auto !important;
-
-    margin-right:auto !important;
-
-}
-
-
-/* force all main sections center */
-
-.centerApp .topbar,
-.centerApp .tabs,
-.centerApp .wrapper{
-
-    width:100% !important;
-
-    max-width:1000px !important;
-
-    margin-left:auto !important;
-
-    margin-right:auto !important;
+text-align:justify;
 
 }
 
@@ -905,7 +675,7 @@ body{
   </div>
 </div>
 
-<div id="appContainer" style="display:none" class="centerApp">
+<div id="appContainer" style="display:none">
 
 <!-- top -->
 <div class="topbar">
@@ -1288,6 +1058,63 @@ onclick="document.getElementById('restoreFile').click()">
 ♻️ Restore From File
 
 </button>
+
+</div>
+
+<div style="height:20px;"></div>
+
+<!-- MUTUAL FUND DISCLAIMER + COPYRIGHT -->
+
+
+<div class="container disclaimer-box">
+
+
+<h3>
+⚠️ Mutual Fund Disclaimer
+</h3>
+
+
+<p>
+
+Mutual fund investments are subject to market risks. 
+Please read all scheme related documents carefully before investing.
+
+</p>
+
+
+<p>
+
+Past performance is not indicative of future returns. 
+The value of investments may go up or down depending on market conditions.
+
+</p>
+
+
+<p>
+
+Investors should consider their financial goals, risk profile and investment needs before making any investment decision.
+
+</p>
+
+
+<p>
+
+This application is created for educational and informational purposes only and does not constitute investment advice, recommendation, or a guarantee of returns.
+
+</p>
+
+
+
+<br>
+
+
+<div class="copyright">
+
+© <span id="mfYear"></span> FinTrust Creations. All Rights Reserved.
+
+</div>
+
+
 
 </div>
 
@@ -2968,6 +2795,9 @@ reader.readAsText(file);
 
 
 }
+
+document.getElementById("mfYear").innerHTML =
+new Date().getFullYear();
 
 </script>
 
