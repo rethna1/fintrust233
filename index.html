@@ -589,156 +589,297 @@ textarea:focus{
   }
 }
 
-/* ==========================
-   DESKTOP RESPONSIVE MODE
-========================== */
+.backup-btn{
+  width:100%;
+  padding:13px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-@media (min-width: 900px){
+.share-backup{
+  background:#0A8F55;
+  color:white;
+}
 
+.restore-backup{
+  background:#374151;
+  color:white;
+}
+
+/* =====================================
+   DESKTOP VIEW FIX
+   HOME CLIENTS INVESTMENTS REPORTS ONLY
+   DO NOT TOUCH MOBILE NAVIGATION
+===================================== */
+
+@media (min-width:768px){
+
+  .wrapper{
+
+    max-width:1200px;
+    margin:25px auto;
+    padding:0 30px;
+
+  }
+
+
+  /* make cards wider on desktop */
+
+  .wrapper .card,
+  .wrapper .client-card,
+  .wrapper .invest-card,
+  .wrapper .report-card{
+
+    width:100%;
+  }
+
+
+  /* better desktop spacing */
+
+  .wrapper{
+
+    display:block;
+
+  }
+
+
+  /* top content spacing */
+
+  .topbar{
+
+    padding-left:30px;
+    padding-right:30px;
+
+  }
+
+
+  /* tabs desktop */
+
+  .tabs{
+
+    padding-left:30px;
+
+  }
+
+}
+
+/* =========================================
+   DESKTOP CENTER ALIGNMENT FIX
+   HOME / CLIENTS / INVESTMENTS / REPORTS
+   Bottom navigation untouched
+========================================= */
+
+@media (min-width:768px){
+
+  body{
+    display:block;
+  }
+
+
+  .wrapper{
+
+    width:100%;
+    max-width:1200px;
+
+    margin-left:auto;
+    margin-right:auto;
+
+    padding-left:30px;
+    padding-right:30px;
+
+  }
+
+
+  /* center top sections also */
+
+  .topbar,
+  .tabs{
+
+    width:100%;
+    
+  }
+
+
+  .topbar > *,
+  .tabs > *{
+
+    max-width:1200px;
+
+  }
+
+
+  /* Cards fill centered area */
+
+  .wrapper .card,
+  .wrapper .client-card,
+  .wrapper .invest-card,
+  .wrapper .report-card{
+
+    width:100%;
+
+  }
+
+}
+
+/* =========================
+   PROFESSIONAL CENTER LAYOUT
+========================= */
 
 body{
-    background:#f3f4f6;
+  margin:0;
+  padding:0;
+  background:#f3f4f6;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
 
-/* hide bottom navigation on desktop */
+/* Main App Container */
+#appContainer{
 
-.bottom-nav{
-    display:none;
+  width:100%;
+  min-height:100vh;
+
 }
 
 
-/* convert top tabs to sidebar */
+/* Main content wrapper */
+.wrapper{
 
+  width:100%;
+  max-width:900px;        /* desktop professional width */
+  margin:0 auto;          /* ⭐ center horizontally */
+  padding:20px;
+
+}
+
+
+/* Top Header */
+.topbar{
+
+  max-width:900px;
+  margin:0 auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:15px 20px;
+
+  background:white;
+
+  border-radius:0 0 15px 15px;
+
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+
+}
+
+
+/* Tabs */
 .tabs{
 
-    position:fixed;
+  max-width:900px;
 
-    left:0;
+  margin:15px auto;
 
-    top:70px;
+  display:flex;
 
-    width:220px;
+  justify-content:center;
 
-    height:calc(100vh - 70px);
+  gap:25px;
 
-    background:#ffffff;
+  background:white;
 
-    display:flex;
+  padding:12px;
 
-    flex-direction:column;
+  border-radius:12px;
 
-    padding:15px;
-
-    border-right:1px solid #ddd;
-
-    gap:8px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.08);
 
 }
 
 
+/* Cards */
+.card{
 
-.tab{
+  background:white;
 
-    padding:14px;
+  border-radius:18px;
 
-    border-radius:10px;
+  padding:20px;
 
-    cursor:pointer;
+  margin-bottom:18px;
+
+  box-shadow:
+  0 5px 18px rgba(0,0,0,0.08);
 
 }
 
 
+/* Mobile */
+@media(max-width:700px){
 
-/* main area */
+.wrapper,
+.topbar,
+.tabs{
+
+  max-width:100%;
+
+}
 
 .wrapper{
 
-    margin-left:240px;
-
-    max-width:900px;
-
-    margin-right:auto;
+ padding:12px;
 
 }
 
 
+.tabs{
 
-/* top bar */
+ gap:10px;
 
-.topbar{
+ font-size:13px;
 
-    position:fixed;
+ overflow-x:auto;
 
-    top:0;
+}
 
-    left:0;
+}
 
-    right:0;
+#appContainer{
+  max-width:900px;
+  margin:0 auto;
+}
 
-    height:65px;
+.centerApp{
 
-    z-index:1000;
+    width:100% !important;
+
+    max-width:1000px !important;
+
+    margin-left:auto !important;
+
+    margin-right:auto !important;
 
 }
 
 
+/* force all main sections center */
 
-/* cards */
+.centerApp .topbar,
+.centerApp .tabs,
+.centerApp .wrapper{
 
-.card{
+    width:100% !important;
 
-    border-radius:14px;
+    max-width:1000px !important;
 
-}
+    margin-left:auto !important;
 
-
-
-/* forms */
-
-.input-group input,
-.input-group textarea,
-.input-group select{
-
-    max-width:500px;
-
-}
-
-
-/* buttons */
-
-.primary-btn{
-
-    width:auto;
-
-    padding:12px 22px;
-
-}
-
-
-
-/* investment form */
-
-#invest .card:first-child,
-#clients .card:first-child,
-#settings .card:first-child{
-
-    max-width:700px;
-
-}
-
-
-/* reports */
-
-.report-card,
-.client-card,
-.invest-card{
-
-    max-width:700px;
-
-}
-
-
+    margin-right:auto !important;
 
 }
 
@@ -764,7 +905,7 @@ body{
   </div>
 </div>
 
-<div id="appContainer" style="display:none">
+<div id="appContainer" style="display:none" class="centerApp">
 
 <!-- top -->
 <div class="topbar">
@@ -1118,30 +1259,35 @@ No cloud sync. No third-party servers. Your data stays fully under your control.
 
 
 <div class="btn-row" style="margin-top:12px">
-
   <button class="primary-btn" onclick="exportPrintableBackup()">
     🧾 Open Backup (Printable)
   </button>
 
-  <button class="primary-btn" onclick="downloadBackupFile()">
-    📥 Download Backup File
-  </button>
+<button 
+class="backup-btn share-backup"
+onclick="shareBackupFile()">
 
-  <button class="primary-btn" onclick="shareBackupFile()">
-    📤 Share Backup File
-  </button>
+📤 Share Backup File
 
-  <button class="primary-btn" onclick="openRestoreFile()">
-    📂 Restore From File
-  </button>
+</button>
 
-  <input 
-    type="file"
-    id="restoreFileInput"
-   accept=".ftb,.json"
-    style="display:none"
-    onchange="restoreBackupFromFile(event)"
-  >
+
+<input 
+type="file"
+id="restoreFile"
+accept=".json"
+style="display:none"
+onchange="restoreBackupFromFile(this)">
+
+
+
+<button
+class="backup-btn restore-backup"
+onclick="document.getElementById('restoreFile').click()">
+
+♻️ Restore From File
+
+</button>
 
 </div>
 
@@ -2625,287 +2771,200 @@ ${clients.map(client => {
 
 
 
-function copyBackupToClipboard(){
-  const clients = getData(LS_CLIENTS).sort((a,b) =>
-    a.name.localeCompare(b.name, 'en', { sensitivity:'base' })
-  );
-
-  const investments = getData(LS_INVESTMENTS).sort((a,b) =>
-    (a.clientName || '').localeCompare(b.clientName || '', 'en', { sensitivity:'base' })
-  );
-
-  const data = {
-    date: new Date().toISOString(),
-    clients,
-    investments
-  };
-
-  navigator.clipboard.writeText(
-    JSON.stringify(data, null, 2)
-  ).then(()=>{
-    showToast('Backup copied. Paste into Notes / Email');
-  });
-}
-
-/* ==========================
-   FILE BACKUP SYSTEM
-========================== */
+/* =========================
+   FINTRUST BACKUP SHARE
+========================= */
 
 
-function createBackupObject(){
-
-  const clients = getData(LS_CLIENTS);
-
-  const investments = getData(LS_INVESTMENTS);
+function createBackupData(){
 
 
-  return {
+const clients = getData(LS_CLIENTS);
 
-    app:"FinTrust Mini Back Office",
+const investments = getData(LS_INVESTMENTS);
 
-    version:"1.0",
 
-    backupDate:new Date().toISOString(),
 
-    clients:clients,
+return JSON.stringify({
 
-    investments:investments
+date:new Date().toISOString(),
 
-  };
+clients:clients,
+
+investments:investments
+
+
+},null,2);
+
 
 }
 
 
 
-/* DOWNLOAD BACKUP FILE */
-
-function downloadBackupFile(){
-
-  const backup = createBackupObject();
-
-
-  const blob = new Blob(
-    [
-      JSON.stringify(backup,null,2)
-    ],
-    {
-      type:"application/octet-stream"
-    }
-  );
-
-
-  const url = URL.createObjectURL(blob);
-
-
-  const a=document.createElement("a");
-
-
-  a.href=url;
-
-
-  a.download =
-  "FinTrust_Backup_" +
-  new Date().toISOString().slice(0,10)
-  +
-  ".ftb";
-
-
-  document.body.appendChild(a);
-
-
-  a.click();
-
-
-  document.body.removeChild(a);
-
-
-  URL.revokeObjectURL(url);
-
-
-  showToast("Backup saved in Downloads folder");
-
-}
-
-
-
-
-
-/* SHARE BACKUP FILE - MOBILE */
 
 async function shareBackupFile(){
 
-
- const backup=createBackupObject();
-
-
- const blob=new Blob(
-   [
-    JSON.stringify(backup,null,2)
-   ],
-   {
-    type:"application/json"
-   }
- );
+let backupText = createBackupData();
 
 
- const file=new File(
-   [
-    blob
-   ],
-   "FinTrust_Backup.json",
-   {
-    type:"application/json"
-   }
- );
+let blob = new Blob(
+[backupText],
+{
+type:"application/json"
+}
+);
 
 
 
- if(navigator.share && navigator.canShare({files:[file]})){
+let file = new File(
+[blob],
+"FinTrust_Master_Backup.json",
+{
+type:"application/json"
+}
+);
 
 
-   await navigator.share({
 
-     title:"FinTrust Backup",
+/* MOBILE SHARE */
 
-     text:"FinTrust Mini Back Office Backup",
+if(
+navigator.share &&
+/Android|iPhone|iPad/i.test(navigator.userAgent)
+){
 
-     files:[file]
-
-   });
+try{
 
 
- }
+await navigator.share({
 
- else{
+title:"FinTrust Backup",
 
-   downloadBackupFile();
+text:"FinTrust Master Backup File",
 
- }
+files:[file]
+
+});
+
+
+return;
+
+
+}
+
+catch(error){
+
+console.log(error);
+
+}
+
+}
+
+
+
+/* DESKTOP DOWNLOAD */
+
+let url =
+URL.createObjectURL(blob);
+
+
+
+let link =
+document.createElement("a");
+
+
+link.href=url;
+
+
+link.download="FinTrust_Master_Backup.json";
+
+
+document.body.appendChild(link);
+
+
+link.click();
+
+
+document.body.removeChild(link);
+
+
+
+setTimeout(()=>{
+
+URL.revokeObjectURL(url);
+
+},1000);
+
+
+
+alert("Backup downloaded successfully");
+
 
 }
 
 
 
 
+function restoreBackupFromFile(input){
 
-/* OPEN FILE SELECT */
 
-function openRestoreFile(){
+const file=input.files[0];
 
- document
- .getElementById("restoreFileInput")
- .click();
+
+if(!file)return;
+
+
+const reader=new FileReader();
+
+
+reader.onload=function(e){
+
+
+try{
+
+
+const data=JSON.parse(e.target.result);
+
+
+
+localStorage.setItem(
+LS_CLIENTS,
+JSON.stringify(data.clients || [])
+);
+
+
+
+localStorage.setItem(
+LS_INVESTMENTS,
+JSON.stringify(data.investments || [])
+);
+
+
+
+showToast("Backup restored successfully");
+
+
+location.reload();
+
+
+
+}
+
+catch(err){
+
+
+alert("Invalid backup file");
+
 
 }
 
 
 
+};
 
 
-/* RESTORE FROM FILE */
+reader.readAsText(file);
 
-
-function restoreBackupFromFile(event){
-
-
- const file =
- event.target.files[0];
-
-
- if(!file)return;
-
-
-
- const reader=new FileReader();
-
-
-
- reader.onload=function(e){
-
-
-  try{
-
-
-   const backup =
-   JSON.parse(e.target.result);
-
-
-
-   if(
-    !backup.clients ||
-    !backup.investments
-   ){
-
-    alert("Invalid backup file");
-
-    return;
-
-   }
-
-
-
-   if(
-   !confirm(
-   "This will replace current data. Continue?"
-   )
-   )
-   return;
-
-
-
-   localStorage.setItem(
-
-    LS_CLIENTS,
-
-    JSON.stringify(
-     backup.clients
-    )
-
-   );
-
-
-
-   localStorage.setItem(
-
-    LS_INVESTMENTS,
-
-    JSON.stringify(
-     backup.investments
-    )
-
-   );
-
-
-
-   showToast(
-   "Backup restored successfully"
-   );
-
-
-
-   loadClients();
-
-   loadInvestments();
-
-
-  }
-
-
-  catch(err){
-
-
-   alert(
-   "Backup file error"
-   );
-
-
-  }
-
-
- };
-
-
- reader.readAsText(file);
 
 
 }
